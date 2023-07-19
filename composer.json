@@ -1,13 +1,7 @@
 {
-    "name": "ircmaxell/php-cfg",
-    "description": "A Control Flow Graph implementation for PHP",
+    "name": "yslei/php-cfg",
+    "description": "A Control Flow Graph implementation for PHP based On the orignal ircmaxell/php-cfg",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Anthony Ferrara",
-            "email": "ircmaxell@gmail.com"
-        }
-    ],
     "require": {
         "php": ">=7.4",
         "nikic/php-parser": "^4.0",
