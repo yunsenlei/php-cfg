@@ -51,7 +51,7 @@ class GraphViz extends Printer
   public function printFunc(Func $func)
   {
     $graph = $this->createGraph();
-    $this->printFuncInfo($func, $graph, '');
+    $this->printFuncInto($func, $graph, '');
 
     return $graph;
   }
