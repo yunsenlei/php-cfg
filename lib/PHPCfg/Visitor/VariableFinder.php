@@ -17,38 +17,41 @@ use PHPCfg\Op;
 
 class VariableFinder extends AbstractVisitor
 {
-    protected $variables;
+  protected $variables;
 
-    public function __construct()
-    {
-        $this->variables = new \SplObjectStorage();
+  public function __construct()
+  {
+    $this->variables = new \SplObjectStorage();
+  }
+
+  public function getVariables()
+  {
+    return $this->variables;
+  }
+
+  public function enterBlock(Block $block, Block $prior = null)
+  {
+    foreach ($block->phi as $phi) {
+      $this->enterOp($phi, $block);
     }
+  }
 
-    public function getVariables()
-    {
-        return $this->variables;
-    }
-
-    public function enterBlock(Block $block, Block $prior = null)
-    {
-        foreach ($block->phi as $phi) {
-            $this->enterOp($phi, $block);
+  public function enterOp(Op $op, Block $block)
+  {
+    foreach ($op->getVariableNames() as $name) {
+      if (!isset($op->{$name})) {
+        continue;
+      }
+      $var = $op->{$name};
+      if (!is_array($var)) {
+        $var = [$var];
+      }
+      foreach ($var as $v) {
+        if (null === $v) {
+          continue;
         }
+        $this->variables->attach($v);
+      }
     }
-
-    public function enterOp(Op $op, Block $block)
-    {
-        foreach ($op->getVariableNames() as $name) {
-            $var = $op->{$name};
-            if (! is_array($var)) {
-                $var = [$var];
-            }
-            foreach ($var as $v) {
-                if (null === $v) {
-                    continue;
-                }
-                $this->variables->attach($v);
-            }
-        }
-    }
+  }
 }
