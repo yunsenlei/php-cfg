@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 use PhpParser\ParserFactory;
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
-$graphviz = false;
+$graphviz = true;
 list($fileName, $code) = getCode($argc, $argv);
 
 $parser = new PHPCfg\Parser((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
@@ -33,28 +33,30 @@ $script = $parser->parse($code, __FILE__);
 $traverser->traverse($script);
 
 if ($graphviz) {
-    $dumper = new PHPCfg\Printer\GraphViz();
-    echo $dumper->printScript($script);
+  $dumper = new PHPCfg\Printer\GraphViz();
+  $graph = $dumper->printScript($script);
+  $graph->export($type = 'dot_json', $file = 'demo_script.dot_json');
 } else {
-    $dumper = new PHPCfg\Printer\Text();
-    echo $dumper->printScript($script);
+  $dumper = new PHPCfg\Printer\Text();
+  echo $dumper->printScript($script);
 }
 
 function getCode($argc, $argv)
 {
-    if ($argc >= 2) {
-        if (strpos($argv[1], '<?php') === 0) {
-            return ['command line code', $argv[1]];
-        }
-
-        return [$argv[1], file_get_contents($argv[1])];
+  if ($argc >= 2) {
+    if (strpos($argv[1], '<?php') === 0) {
+      return ['command line code', $argv[1]];
     }
 
-    return [__FILE__, <<<'EOF'
+    return [$argv[1], file_get_contents($argv[1])];
+  }
+
+  return [
+    __FILE__, <<<'EOF'
 <?php
 function foo(array $a) {
     $a[] = 1;
 }
 EOF
-    ];
+  ];
 }
