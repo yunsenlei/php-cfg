@@ -108,7 +108,6 @@ abstract class Printer
   protected function renderOp(Op $op)
   {
     $result = $op->getType();
-
     if ($op instanceof Op\CallableOp) {
       $func = $op->getFunc();
       $result .= '<' . var_export($func->name, true) . '>';
@@ -171,8 +170,9 @@ abstract class Printer
       $result .= "\n    type: " . $this->indent($this->renderIncludeType($op->type));
     }
 
+    $result .= "\n    line: ". $op->getLine(); 
     foreach ($op->getVariableNames() as $varName) {
-      if (!isset($op->{$name})) {
+      if (!isset($op->{$varName})) {
         continue;
       }
       $vars = $op->{$varName};
